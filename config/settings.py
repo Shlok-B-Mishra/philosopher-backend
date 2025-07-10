@@ -74,8 +74,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'philosopher_db',              # <-- Using the name you chose!
+        'USER': 'philosopher_user',           # Your PostgreSQL username
+        'PASSWORD': 'Alaukik',   # <--- IMPORTANT: Replace with YOUR actual password
+        'HOST': 'localhost',                  # Or '127.0.0.1'
+        'PORT': '',                           # Leave empty for default (5432), or '5432'
     }
 }
 
