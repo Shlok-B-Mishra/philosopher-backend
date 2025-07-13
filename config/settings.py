@@ -10,6 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
+import dj_database_url
+
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,13 +23,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-+l9ofchsa3!2u5bpeb7r%eij9tdw_y7hu6-t_k31+tma(07wm^'
+
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-+l9ofchsa3!2u5bpeb7r%eij9tdw_y7hu6-t_k31+tma(07wm^')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Set DEBUG to False in production
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = []
-
+# Add Render.com URL to allowed hosts
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 # Application definition
 
@@ -40,6 +48,7 @@ INSTALLED_APPS = [
     'rest_framework', # We already installed DRF, good to add it now
     'users',       # Our new users app
     'debates',     # Our new debates app
+    'corsheaders',  # <-- ADD THIS
 ]
 
 MIDDLEWARE = [
@@ -50,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # <-- ADD THIS
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -76,14 +86,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'philosopher_db',              # <-- Using the name you chose!
-        'USER': 'philosopher_user',           # Your PostgreSQL username
-        'PASSWORD': 'Alaukik',   # <--- IMPORTANT: Replace with YOUR actual password
-        'HOST': 'localhost',                  # Or '127.0.0.1'
-        'PORT': '',                           # Leave empty for default (5432), or '5432'
-    }
+    'default': dj_database_url.config(
+        # This is the fallback URL for your local machine.
+        # Make sure the password here is correct for your local PostgreSQL.
+        default='postgres://philosopher_user:Alaukik@localhost/philosopher_db',
+        conn_max_age=600
+    )
 }
 
 
@@ -129,3 +137,8 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.CustomUser'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]

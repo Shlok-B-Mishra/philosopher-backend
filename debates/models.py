@@ -19,7 +19,7 @@ class Debate(models.Model):
         related_name='debates'
     )
     # This will hold the Livepeer playback URL
-    livepeer_playback_url = models.URLField(max_length=255, blank=True)
+    livepeer_embed_url = models.URLField(max_length=255, blank=True)
     # Status of the debate
     status = models.CharField(
         max_length=2,

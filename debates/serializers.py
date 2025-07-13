@@ -23,7 +23,7 @@ class DebateSerializer(serializers.ModelSerializer):
             'title',
             'description',
             'creator', # This will now use the CreatorSerializer
-            'livepeer_playback_url',
+            'livepeer_embed_url', # <-- ADD THIS
             'status',
             'scheduled_start_time',
             'created_at',
